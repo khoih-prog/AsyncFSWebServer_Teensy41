@@ -1,0 +1,52 @@
+{
+  "name":"AsyncFSWebServer_Teensy41",
+  "version": "v1.4.2-alpha-0",
+  "description":"Asynchronous HTTP and WebSocket Server Library for Teensy 4.1 using QNEthernet with FS support. This library is one of the current or future Async libraries to support Teensy 4.1 using QNEthernet, such as AsyncHTTPRequest_Generic, AsyncHTTPSRequest_Generic, AsyncMQTT_Generic, Teensy41_AsyncWebServer, Teensy41_AsyncUDP, Teensy41_AsyncDNSServer, AsyncFSWebServer_Teensy41_SSL, etc.",
+  "keywords":"async, tcp, http, websocket, webserver, async-tcp, async-http, async-webserver, async-websocket, teensy, teensy41, teensy-41, qnethernet, lwip",
+  "authors": 
+  [
+    {
+      "name": "Hristo Gochkov",
+      "url":   "https://github.com/me-no-dev"
+    },
+    {
+      "name":  "Khoi Hoang",
+      "url":   "https://github.com/khoih-prog",
+      "email": "khoih-dot-prog@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/khoih-prog/AsyncFSWebServer_Teensy41.git"
+  },
+  "dependencies": 
+  [
+    {
+      "owner": "khoih-prog",
+      "name": "Teensy41_AsyncTCP",
+      "version": ">=1.0.0",
+      "platforms": ["teensy", "avr"]
+    },
+    {
+      "owner": "ssilverman",
+      "name": "QNEthernet",
+      "version": ">=0.14.0",
+      "platforms": ["teensy"]
+    }
+  ],
+  "homepage": "https://github.com/khoih-prog/AsyncFSWebServer_Teensy41",
+  "export": {
+    "exclude": [
+      "linux",
+      "extras",
+      "tests"
+    ]
+  },
+  "license": "GPL-3.0",
+  "frameworks": "*",
+  "platforms": ["teensy", "avr"],
+  "examples": "examples/*/*/*.ino",
+  "headers": ["AsyncFSWebServer_Teensy41.h", "AsyncFSWebServer_Teensy41.hpp"]
+}
