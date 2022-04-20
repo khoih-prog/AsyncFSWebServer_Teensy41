@@ -1,6 +1,6 @@
 {
   "name":"AsyncFSWebServer_Teensy41",
-  "version": "v1.4.2-alpha.1",
+  "version": "1.4.2-alpha.1",
   "description":"Asynchronous HTTP and WebSocket Server Library for Teensy 4.1 using QNEthernet with FS support. This library is one of the current or future Async libraries to support Teensy 4.1 using QNEthernet, such as AsyncHTTPRequest_Generic, AsyncHTTPSRequest_Generic, AsyncMQTT_Generic, Teensy41_AsyncWebServer, Teensy41_AsyncUDP, Teensy41_AsyncDNSServer, AsyncFSWebServer_Teensy41_SSL, etc.",
   "keywords":"async, tcp, http, websocket, webserver, async-tcp, async-http, async-webserver, async-websocket, teensy, teensy41, teensy-41, qnethernet, lwip",
   "authors": 
