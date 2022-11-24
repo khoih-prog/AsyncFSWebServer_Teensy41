@@ -1,21 +1,21 @@
 /****************************************************************************************************************************
   AsyncFSWebSocket_Teensy41.cpp - Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
-  
+
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
- 
+  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
   Version: 1.4.1
 
   Version Modified By   Date      Comments
@@ -81,9 +81,9 @@ size_t b64_encoded_size(size_t inlen)
 char * b64_encode(const unsigned char *in, size_t len, char * out)
 {
   const char b64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  size_t  elen;  
-  size_t  i;  
-  size_t  j;  
+  size_t  elen;
+  size_t  i;
+  size_t  j;
   size_t  v;
 
   if (in == NULL || len == 0)
@@ -628,6 +628,7 @@ size_t AsyncWebSocketMultiMessage::send(AsyncClient *client)
     _sent -= (toSend - sent);
     _ack -= (toSend - sent);
   }
+
   LOGDEBUG3("Send OK: _sent = ", _sent, "= sent =", sent);
 
   return sent;
@@ -645,7 +646,8 @@ AsyncWebSocketClient::AsyncWebSocketClient(AsyncWebServerRequest *request, Async
 {
   delete  c;
 }))
-, _messageQueue(LinkedList<AsyncWebSocketMessage *>([](AsyncWebSocketMessage *m) {
+, _messageQueue(LinkedList<AsyncWebSocketMessage *>([](AsyncWebSocketMessage *m)
+{
   delete  m;
 }))
 , _tempObject(NULL)
@@ -728,6 +730,7 @@ void AsyncWebSocketClient::_onAck(size_t len, uint32_t time)
 
         return;
       }
+
       _controlQueue.remove(head);
     }
   }
@@ -743,10 +746,12 @@ void AsyncWebSocketClient::_onAck(size_t len, uint32_t time)
 
 void AsyncWebSocketClient::_onPoll()
 {
-  if (_client->canSend() && (!_controlQueue.isEmpty() || !_messageQueue.isEmpty())) {
+  if (_client->canSend() && (!_controlQueue.isEmpty() || !_messageQueue.isEmpty()))
+  {
     _runQueue();
   }
-  else if (_keepAlivePeriod > 0 && _controlQueue.isEmpty() && _messageQueue.isEmpty() && (millis() - _lastMessageTime) >= _keepAlivePeriod)
+  else if (_keepAlivePeriod > 0 && _controlQueue.isEmpty() && _messageQueue.isEmpty()
+           && (millis() - _lastMessageTime) >= _keepAlivePeriod)
   {
     ping((uint8_t *)AWSC_PING_PAYLOAD, AWSC_PING_PAYLOAD_LEN);
   }
@@ -899,7 +904,8 @@ void AsyncWebSocketClient::_onData(void *pbuf, size_t plen)
         data += 2;
         plen -= 2;
       }
-      else if (_pinfo.len == 127) {
+      else if (_pinfo.len == 127)
+      {
         _pinfo.len = fdata[9] | (uint16_t)(fdata[8]) << 8 | (uint32_t)(fdata[7]) << 16 | (uint32_t)(fdata[6]) << 24
                      | (uint64_t)(fdata[5]) << 32 | (uint64_t)(fdata[4]) << 40 | (uint64_t)(fdata[3]) << 48 | (uint64_t)(fdata[2]) << 56;
         data += 8;
@@ -929,7 +935,8 @@ void AsyncWebSocketClient::_onData(void *pbuf, size_t plen)
 
       if (_pinfo.index == 0)
       {
-        if (_pinfo.opcode) {
+        if (_pinfo.opcode)
+        {
           _pinfo.message_opcode = _pinfo.opcode;
           _pinfo.num = 0;
         }
@@ -979,7 +986,8 @@ void AsyncWebSocketClient::_onData(void *pbuf, size_t plen)
         if (datalen != AWSC_PING_PAYLOAD_LEN || memcmp(AWSC_PING_PAYLOAD, data, AWSC_PING_PAYLOAD_LEN) != 0)
           _server->_handleEvent(this, WS_EVT_PONG, NULL, data, datalen);
       }
-      else if (_pinfo.opcode < 8) { //continuation or text/binary frame
+      else if (_pinfo.opcode < 8)   //continuation or text/binary frame
+      {
         _server->_handleEvent(this, WS_EVT_DATA, (void *)&_pinfo, data, datalen);
       }
     }
@@ -1143,7 +1151,8 @@ AsyncWebSocket::AsyncWebSocket(const String & url)
 
 AsyncWebSocket::~AsyncWebSocket() {}
 
-void AsyncWebSocket::_handleEvent(AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len)
+void AsyncWebSocket::_handleEvent(AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data,
+                                  size_t len)
 {
   if (_eventHandler != NULL)
   {
@@ -1497,7 +1506,8 @@ void AsyncWebSocket::handleRequest(AsyncWebServerRequest * request)
     return;
   }
 
-  if ((_username != "" && _password != "") && !request->authenticate(_username.c_str(), _password.c_str())) {
+  if ((_username != "" && _password != "") && !request->authenticate(_username.c_str(), _password.c_str()))
+  {
     return request->requestAuthentication();
   }
 
@@ -1584,7 +1594,7 @@ AsyncWebSocket::AsyncWebSocketClientLinkedList AsyncWebSocket::getClients() cons
     b64_encode((const unsigned char *)sha1HashBin, 20, buf);
     sprintf(ckey, "%s", trim(buf));
     __enable_irq();
-}
+  }
 */
 AsyncWebSocketResponse::AsyncWebSocketResponse(const String & key, AsyncWebSocket * server)
 {

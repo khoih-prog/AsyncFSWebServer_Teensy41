@@ -1,21 +1,21 @@
 /****************************************************************************************************************************
   AsyncEventSource_Teensy41.cpp - Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
-  
+
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
- 
+  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
   Version: 1.4.1
 
   Version Modified By   Date      Comments
@@ -336,7 +336,8 @@ void AsyncEventSourceClient::send(const char *message, const char *event, uint32
   _queueMessage(new AsyncEventSourceMessage(ev.c_str(), ev.length()));
 }
 
-void AsyncEventSourceClient::_runQueue() {
+void AsyncEventSourceClient::_runQueue()
+{
   while (!_messageQueue.isEmpty() && _messageQueue.front()->finished())
   {
     _messageQueue.remove(_messageQueue.front());
@@ -417,7 +418,8 @@ size_t AsyncEventSource::avgPacketsWaiting() const
 
   for (const auto &c : _clients)
   {
-    if (c->connected()) {
+    if (c->connected())
+    {
       aql += c->packetsWaiting();
       ++nConnectedClients;
     }
@@ -448,15 +450,15 @@ size_t AsyncEventSource::count() const
   });
 }
 
-bool AsyncEventSource::canHandle(AsyncWebServerRequest *request) 
+bool AsyncEventSource::canHandle(AsyncWebServerRequest *request)
 {
-  if (request->method() != HTTP_GET || !request->url().equals(_url)) 
+  if (request->method() != HTTP_GET || !request->url().equals(_url))
   {
     return false;
   }
-  
+
   request->addInterestingHeader("Last-Event-ID");
-  
+
   return true;
 }
 
@@ -470,7 +472,7 @@ void AsyncEventSource::handleRequest(AsyncWebServerRequest *request)
 
 // Response
 
-AsyncEventSourceResponse::AsyncEventSourceResponse(AsyncEventSource *server) 
+AsyncEventSourceResponse::AsyncEventSourceResponse(AsyncEventSource *server)
 {
   _server = server;
   _code = 200;
@@ -480,20 +482,20 @@ AsyncEventSourceResponse::AsyncEventSourceResponse(AsyncEventSource *server)
   addHeader("Connection", "keep-alive");
 }
 
-void AsyncEventSourceResponse::_respond(AsyncWebServerRequest *request) 
+void AsyncEventSourceResponse::_respond(AsyncWebServerRequest *request)
 {
   String out = _assembleHead(request->version());
   request->client()->write(out.c_str(), _headLength);
   _state = RESPONSE_WAIT_ACK;
 }
 
-size_t AsyncEventSourceResponse::_ack(AsyncWebServerRequest *request, size_t len, uint32_t time __attribute__((unused))) 
+size_t AsyncEventSourceResponse::_ack(AsyncWebServerRequest *request, size_t len, uint32_t time __attribute__((unused)))
 {
-  if (len) 
+  if (len)
   {
     new AsyncEventSourceClient(request, _server);
   }
-  
+
   return 0;
 }
 

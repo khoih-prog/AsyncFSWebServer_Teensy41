@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   Async_SimpleWebServer.ino
-  
+
   Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
   Licensed under GPLv3 license
@@ -59,13 +59,16 @@ void notFound(AsyncWebServerRequest *request)
   request->send(404, "text/plain", "Not found");
 }
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
+
   while (!Serial);
 
-  Serial.print("\nStart Async_SimpleWebServer on "); Serial.print(BOARD_NAME);
-  Serial.print(" with "); Serial.println(SHIELD_TYPE);
+  Serial.print("\nStart Async_SimpleWebServer on ");
+  Serial.print(BOARD_NAME);
+  Serial.print(" with ");
+  Serial.println(SHIELD_TYPE);
   Serial.println(ASYNC_FSWEBSERVER_TEENSY41_VERSION);
 
   delay(500);
@@ -98,51 +101,52 @@ void setup()
   }
   else
   {
-    Serial.print(F("Connected! IP address:")); Serial.println(Ethernet.localIP());
+    Serial.print(F("Connected! IP address:"));
+    Serial.println(Ethernet.localIP());
   }
 
 #if USING_DHCP
   delay(1000);
-#else  
+#else
   delay(2000);
 #endif
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) 
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request)
   {
     request->send(200, "text/plain", "Hello, world from Teensy 4.1 and QNEthernet");
   });
 
   // Send a GET request to <IP>/get?message=<message>
-  server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) 
+  server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request)
   {
     String message;
-    
-    if (request->hasParam(PARAM_MESSAGE)) 
+
+    if (request->hasParam(PARAM_MESSAGE))
     {
       message = request->getParam(PARAM_MESSAGE)->value();
-    } 
-    else 
+    }
+    else
     {
       message = "No message sent";
     }
-    
+
     request->send(200, "text/plain", "Hello, GET: " + message);
   });
 
   // Send a POST request to <IP>/post with a form field message set to <message>
-  server.on("/post", HTTP_POST, [](AsyncWebServerRequest * request) 
+  server.on("/post", HTTP_POST, [](AsyncWebServerRequest * request)
   {
     String message;
-    
-    if (request->hasParam(PARAM_MESSAGE, true)) 
+
+    if (request->hasParam(PARAM_MESSAGE, true))
     {
       message = request->getParam(PARAM_MESSAGE, true)->value();
-    } 
-    else 
+    }
+    else
     {
       message = "No message sent";
     }
-    
+
     request->send(200, "text/plain", "Hello, POST: " + message);
   });
 

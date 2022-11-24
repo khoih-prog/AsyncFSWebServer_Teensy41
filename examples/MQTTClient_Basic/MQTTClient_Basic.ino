@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   MQTTClient_Basic.ino
-  
+
   Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
   Licensed under GPLv3 license
@@ -20,7 +20,7 @@
   - publishes "hello world" to the topic "outTopic"
   - subscribes to the topic "inTopic", printing out any messages
     it receives. NB - it assumes the received payloads are strings not binary
-    
+
   It will reconnect to the server if the connection is lost using a blocking
   reconnect function. See the 'mqtt_reconnect_nonblocking' example for how to
   achieve the same result without blocking the main loop.
@@ -42,17 +42,17 @@ const char *subTopic  = "MQTT_Sub";               // Topic to subcribe to
 
 //IPAddress mqttServer(172, 16, 0, 2);
 
-void callback(char* topic, byte* payload, unsigned int length) 
+void callback(char* topic, byte* payload, unsigned int length)
 {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  
-  for (unsigned int i = 0; i < length; i++) 
+
+  for (unsigned int i = 0; i < length; i++)
   {
     Serial.print((char)payload[i]);
   }
-  
+
   Serial.println();
 }
 
@@ -74,14 +74,14 @@ void reconnect()
     if (client.connect(ID, "try", "try"))
     {
       Serial.println("...connected");
-      
+
       // Once connected, publish an announcement...
       client.publish(TOPIC, data.c_str());
 
       //Serial.println("Published connection message successfully!");
       //Serial.print("Subcribed to: ");
       //Serial.println(subTopic);
-      
+
       client.subscribe(subTopic);
       // for loopback testing
       client.subscribe(TOPIC);
@@ -102,10 +102,13 @@ void setup()
 {
   // Open serial communications and wait for port to open:
   Serial.begin(115200);
+
   while (!Serial);
 
-  Serial.print("\nStart MQTTClient_Basic on "); Serial.print(BOARD_NAME);
-  Serial.print(" with "); Serial.println(SHIELD_TYPE);
+  Serial.print("\nStart MQTTClient_Basic on ");
+  Serial.print(BOARD_NAME);
+  Serial.print(" with ");
+  Serial.println(SHIELD_TYPE);
   Serial.println(ASYNC_FSWEBSERVER_TEENSY41_VERSION);
 
   delay(500);
@@ -138,12 +141,13 @@ void setup()
   }
   else
   {
-    Serial.print(F("Connected! IP address:")); Serial.println(Ethernet.localIP());
+    Serial.print(F("Connected! IP address:"));
+    Serial.println(Ethernet.localIP());
   }
 
 #if USING_DHCP
   delay(1000);
-#else  
+#else
   delay(2000);
 #endif
 
@@ -158,18 +162,18 @@ void setup()
 
 unsigned long lastMsg = 0;
 
-void loop() 
+void loop()
 {
   static unsigned long now;
-  
-  if (!client.connected()) 
+
+  if (!client.connected())
   {
     reconnect();
   }
 
   // Sending Data
   now = millis();
-  
+
   if (now - lastMsg > MQTT_PUBLISH_INTERVAL_MS)
   {
     lastMsg = now;
@@ -182,6 +186,6 @@ void loop()
     Serial.print("Message Send : " + String(TOPIC) + " => ");
     Serial.println(data);
   }
-  
+
   client.loop();
 }

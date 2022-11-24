@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   AsyncMultiWebServer.h
-  
+
   Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
   Licensed under GPLv3 license
@@ -133,12 +133,15 @@ void handleNotFound(AsyncWebServerRequest * request)
 void setup()
 {
   Serial.begin(115200);
+
   while (!Serial);
 
   delay(200);
 
-  Serial.print("\nStart AsyncMultiWebServer on "); Serial.print(BOARD_NAME);
-  Serial.print(" with "); Serial.println(SHIELD_TYPE);
+  Serial.print("\nStart AsyncMultiWebServer on ");
+  Serial.print(BOARD_NAME);
+  Serial.print(" with ");
+  Serial.println(SHIELD_TYPE);
   Serial.println(ASYNC_FSWEBSERVER_TEENSY41_VERSION);
 
   delay(500);
@@ -171,18 +174,19 @@ void setup()
   }
   else
   {
-    Serial.print(F("Connected! IP address:")); Serial.println(Ethernet.localIP());
+    Serial.print(F("Connected! IP address:"));
+    Serial.println(Ethernet.localIP());
   }
 
 #if USING_DHCP
   delay(1000);
-#else  
+#else
   delay(2000);
 #endif
 
   for (serverIndex = 0; serverIndex < NUM_SERVERS; serverIndex++)
   {
-    multiServer[serverIndex] = new AsyncWebServer(http_port[serverIndex]);  
+    multiServer[serverIndex] = new AsyncWebServer(http_port[serverIndex]);
 
     if (multiServer[serverIndex])
     {
@@ -192,7 +196,7 @@ void setup()
     {
       Serial.printf("Error initialize multiServer, serverIndex = %d\n", serverIndex);
 
-      while(1);
+      while (1);
     }
 
     multiServer[serverIndex]->on("/", HTTP_GET, [](AsyncWebServerRequest * request)
@@ -200,15 +204,15 @@ void setup()
       handleRoot(request);
     });
 
-    multiServer[serverIndex]->on("/hello", HTTP_GET, [](AsyncWebServerRequest * request) 
-    {     
+    multiServer[serverIndex]->on("/hello", HTTP_GET, [](AsyncWebServerRequest * request)
+    {
       String message = F("Hello from AsyncWebServer using built-in LAN8742A Ethernet, running on ");
       message       += BOARD_NAME;
-      
+
       request->send(200, "text/plain", message);
     });
-      
-    multiServer[serverIndex]->onNotFound([](AsyncWebServerRequest * request) 
+
+    multiServer[serverIndex]->onNotFound([](AsyncWebServerRequest * request)
     {
       handleNotFound(request);
     });

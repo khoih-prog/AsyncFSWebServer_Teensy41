@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   Async_RegexPatterns.ino
-  
+
   Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
   Licensed under GPLv3 license
@@ -72,13 +72,16 @@ void notFound(AsyncWebServerRequest *request)
   request->send(404, "text/plain", "Not found");
 }
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
+
   while (!Serial);
 
-  Serial.print("\nStart Async_RegexPatterns on "); Serial.print(BOARD_NAME);
-  Serial.print(" with "); Serial.println(SHIELD_TYPE);
+  Serial.print("\nStart Async_RegexPatterns on ");
+  Serial.print(BOARD_NAME);
+  Serial.print(" with ");
+  Serial.println(SHIELD_TYPE);
   Serial.println(ASYNC_FSWEBSERVER_TEENSY41_VERSION);
 
   delay(500);
@@ -111,29 +114,30 @@ void setup()
   }
   else
   {
-    Serial.print(F("Connected! IP address:")); Serial.println(Ethernet.localIP());
+    Serial.print(F("Connected! IP address:"));
+    Serial.println(Ethernet.localIP());
   }
 
 #if USING_DHCP
   delay(1000);
-#else  
+#else
   delay(2000);
 #endif
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) 
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request)
   {
     request->send(200, "text/plain", "Hello, world from Async_RegexPatterns on " + String(BOARD_NAME));
   });
 
   // Send a GET request to <IP>/sensor/<number>
-  server.on("^\\/sensor\\/([0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest * request) 
+  server.on("^\\/sensor\\/([0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest * request)
   {
     String sensorNumber = request->pathArg(0);
     request->send(200, "text/plain", "Hello, sensor: " + sensorNumber);
   });
 
   // Send a GET request to <IP>/sensor/<number>/action/<action>
-  server.on("^\\/sensor\\/([0-9]+)\\/action\\/([a-zA-Z0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest * request) 
+  server.on("^\\/sensor\\/([0-9]+)\\/action\\/([a-zA-Z0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest * request)
   {
     String sensorNumber = request->pathArg(0);
     String action = request->pathArg(1);
@@ -148,6 +152,6 @@ void setup()
   Serial.println(Ethernet.localIP());
 }
 
-void loop() 
+void loop()
 {
 }

@@ -1,21 +1,21 @@
 /****************************************************************************************************************************
   AsyncFSWebHandlers_Teensy41.cpp - Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
-  
+
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
   as published bythe Free Software Foundation, either version 3 of the License, or (at your option) any later version.
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.  
- 
+  You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
   Version: 1.4.1
 
   Version Modified By   Date      Comments
@@ -32,19 +32,23 @@
 #include "AsyncFSWebHandlerImpl_Teensy41.h"
 
 AsyncStaticWebHandler::AsyncStaticWebHandler(const char* uri, FS* fs, const char* path, const char* cache_control)
-	: _fs(fs), _uri(uri), _path(path), _default_file("index.htm"), _cache_control(cache_control), _last_modified(""), _callback(nullptr)
+  : _fs(fs), _uri(uri), _path(path), _default_file("index.htm"), _cache_control(cache_control), _last_modified(""),
+    _callback(nullptr)
 {
 #if (_AWS_TEENSY41_LOGLEVEL_ > 3)
+
   if (fs)
   {
-    Serial.print("AsyncStaticWebHandler: FS * = 0x"); Serial.println((uint32_t) fs, HEX);
+    Serial.print("AsyncStaticWebHandler: FS * = 0x");
+    Serial.println((uint32_t) fs, HEX);
   }
   else
   {
     Serial.println("AsyncStaticWebHandler: Error FS NULL");
   }
+
 #endif
-  
+
   // Ensure leading '/'
   if (_uri.length() == 0 || _uri[0] != '/')
     _uri = "/" + _uri;
@@ -129,14 +133,14 @@ bool AsyncStaticWebHandler::canHandle(AsyncWebServerRequest *request)
   {
     return false;
   }
-  
-  if (_getFile(request)) 
+
+  if (_getFile(request))
   {
     // We interested in "If-Modified-Since" header to check if file was modified
     if (_last_modified.length())
       request->addInterestingHeader("If-Modified-Since");
 
-    if(_cache_control.length())
+    if (_cache_control.length())
       request->addInterestingHeader("If-None-Match");
 
     DEBUGF("[AsyncStaticWebHandler::canHandle] TRUE\n");
@@ -152,7 +156,7 @@ bool AsyncStaticWebHandler::_getFile(AsyncWebServerRequest *request)
   String path = request->url().substring(_uri.length());
 
   // We can skip the file check and look for default if request is to the root of a directory or that request path ends with '/'
-  bool canSkipFileCheck = (_isDir && path.length() == 0) || (path.length() && path[path.length()-1] == '/');
+  bool canSkipFileCheck = (_isDir && path.length() == 0) || (path.length() && path[path.length() - 1] == '/');
 
   path = _path + path;
 
@@ -165,8 +169,9 @@ bool AsyncStaticWebHandler::_getFile(AsyncWebServerRequest *request)
     return false;
 
   // Try to add default file, ensure there is a trailing '/' ot the path.
-  if (path.length() == 0 || path[path.length()-1] != '/')
+  if (path.length() == 0 || path[path.length() - 1] != '/')
     path += "/";
+
   path += _default_file;
 
   return _fileExists(request, path);
@@ -181,22 +186,22 @@ bool AsyncStaticWebHandler::_fileExists(AsyncWebServerRequest *request, const St
 
   String gzip = path + ".gz";
 
-  if (_gzipFirst) 
+  if (_gzipFirst)
   {
     request->_tempFile = _fs->open(gzip.c_str(), FILE_READ);
     gzipFound = FILE_IS_REAL(request->_tempFile);
-    
+
     if (!gzipFound)
     {
       request->_tempFile = _fs->open(path.c_str(), FILE_READ);
       fileFound = FILE_IS_REAL(request->_tempFile);
     }
-  } 
-  else 
+  }
+  else
   {
     request->_tempFile = _fs->open(path.c_str(), FILE_READ);
     fileFound = FILE_IS_REAL(request->_tempFile);
-    
+
     if (!fileFound)
     {
       request->_tempFile = _fs->open(gzip.c_str(), FILE_READ);
@@ -206,23 +211,23 @@ bool AsyncStaticWebHandler::_fileExists(AsyncWebServerRequest *request, const St
 
   bool found = fileFound || gzipFound;
 
-  if (found) 
+  if (found)
   {
     // Extract the file name from the path and keep it in _tempObject
     size_t pathLen = path.length();
-    char * _tempPath = (char*)malloc(pathLen+1);
-    
+    char * _tempPath = (char*)malloc(pathLen + 1);
+
     snprintf(_tempPath, pathLen + 1, "%s", path.c_str());
     request->_tempObject = (void*)_tempPath;
 
     // Calculate gzip statistic
     _gzipStats = (_gzipStats << 1) + (gzipFound ? 1 : 0);
-    
-    if (_gzipStats == 0x00) 
+
+    if (_gzipStats == 0x00)
       _gzipFirst = false; // All files are not gzip
-    else if (_gzipStats == 0xFF) 
+    else if (_gzipStats == 0xFF)
       _gzipFirst = true; // All files are gzip
-    else 
+    else
       _gzipFirst = _countBits(_gzipStats) > 4; // IF we have more gzip files - try gzip first
   }
 
@@ -246,44 +251,45 @@ void AsyncStaticWebHandler::handleRequest(AsyncWebServerRequest *request)
   String filename = String((char*)request->_tempObject);
   free(request->_tempObject);
   request->_tempObject = NULL;
-  
-  if((_username != "" && _password != "") && !request->authenticate(_username.c_str(), _password.c_str()))
-      return request->requestAuthentication();
 
-  if (request->_tempFile == true) 
+  if ((_username != "" && _password != "") && !request->authenticate(_username.c_str(), _password.c_str()))
+    return request->requestAuthentication();
+
+  if (request->_tempFile == true)
   {
     String etag = String( (uint32_t) request->_tempFile.size());
-    
-    if (_last_modified.length() && _last_modified == request->header("If-Modified-Since")) 
+
+    if (_last_modified.length() && _last_modified == request->header("If-Modified-Since"))
     {
       request->_tempFile.close();
       request->send(304); // Not modified
-    } 
-    else if (_cache_control.length() && request->hasHeader("If-None-Match") && request->header("If-None-Match").equals(etag)) 
+    }
+    else if (_cache_control.length() && request->hasHeader("If-None-Match")
+             && request->header("If-None-Match").equals(etag))
     {
       request->_tempFile.close();
       AsyncWebServerResponse * response = new AsyncBasicResponse(304); // Not modified
       response->addHeader("Cache-Control", _cache_control);
       response->addHeader("ETag", etag);
       request->send(response);
-    } 
-    else 
+    }
+    else
     {
       AsyncWebServerResponse * response = new AsyncFileResponse(request->_tempFile, filename, String(), false, _callback);
-      
+
       if (_last_modified.length())
         response->addHeader("Last-Modified", _last_modified);
-        
+
       if (_cache_control.length())
       {
         response->addHeader("Cache-Control", _cache_control);
         response->addHeader("ETag", etag);
       }
-      
+
       request->send(response);
     }
-  } 
-  else 
+  }
+  else
   {
     request->send(404);
   }

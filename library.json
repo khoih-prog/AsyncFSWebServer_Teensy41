@@ -26,13 +26,13 @@
     {
       "owner": "khoih-prog",
       "name": "Teensy41_AsyncTCP",
-      "version": ">=1.0.0",
+      "version": ">=1.1.0",
       "platforms": ["teensy", "avr"]
     },
     {
       "owner": "ssilverman",
       "name": "QNEthernet",
-      "version": ">=0.14.0",
+      "version": ">=0.16.0",
       "platforms": ["teensy"]
     }
   ],

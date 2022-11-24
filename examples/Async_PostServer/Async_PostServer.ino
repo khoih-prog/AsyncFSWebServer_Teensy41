@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   Async_PostServer.ino
-  
+
   Dead simple AsyncFSWebServer for Teensy41 QNEthernet
-  
+
   For Teensy41 with QNEthernet using Teensy FS (SD, PSRAM, SQI/QSPI Flash, etc.)
-   
+
   AsyncFSWebServer_Teensy41 is a library for the Teensy41 with QNEthernet
-  
+
   Based on and modified from ESPAsyncWebServer (https://github.com/me-no-dev/ESPAsyncWebServer)
   Built by Khoi Hoang https://github.com/khoih-prog/AsyncFSWebServer_Teensy41
   Licensed under GPLv3 license
@@ -83,7 +83,7 @@ void handlePlain(AsyncWebServerRequest *request)
     digitalWrite(led, 1);
     request->send(405, "text/plain", "Method Not Allowed");
     digitalWrite(led, 0);
-  } 
+  }
   else
   {
     digitalWrite(led, 1);
@@ -104,10 +104,12 @@ void handleForm(AsyncWebServerRequest *request)
   {
     digitalWrite(led, 1);
     String message = "POST form was:\n";
+
     for (uint8_t i = 0; i < request->args(); i++)
     {
       message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
     }
+
     request->send(200, "text/plain", message);
     digitalWrite(led, 0);
   }
@@ -124,10 +126,12 @@ void handleNotFound(AsyncWebServerRequest *request)
   message += "\nArguments: ";
   message += request->args();
   message += "\n";
+
   for (uint8_t i = 0; i < request->args(); i++)
   {
     message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
   }
+
   request->send(404, "text/plain", message);
   digitalWrite(led, 0);
 }
@@ -138,12 +142,15 @@ void setup(void)
   digitalWrite(led, 0);
 
   Serial.begin(115200);
+
   while (!Serial);
 
   delay(200);
 
-  Serial.print("\nStart Async_PostServer on "); Serial.print(BOARD_NAME);
-  Serial.print(" with "); Serial.println(SHIELD_TYPE);
+  Serial.print("\nStart Async_PostServer on ");
+  Serial.print(BOARD_NAME);
+  Serial.print(" with ");
+  Serial.println(SHIELD_TYPE);
   Serial.println(ASYNC_FSWEBSERVER_TEENSY41_VERSION);
 
   delay(500);
@@ -176,12 +183,13 @@ void setup(void)
   }
   else
   {
-    Serial.print(F("Connected! IP address:")); Serial.println(Ethernet.localIP());
+    Serial.print(F("Connected! IP address:"));
+    Serial.println(Ethernet.localIP());
   }
 
 #if USING_DHCP
   delay(1000);
-#else  
+#else
   delay(2000);
 #endif
 

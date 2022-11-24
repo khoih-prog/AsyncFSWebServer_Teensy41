@@ -1,12 +1,15 @@
-# AsyncFSWebServer_Teensy41
+# AsyncFSWebServer_Teensy41 Library
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/AsyncFSWebServer_Teensy41.svg?)](https://www.ardu-badge.com/AsyncFSWebServer_Teensy41)
 [![GitHub release](https://img.shields.io/github/release/khoih-prog/AsyncFSWebServer_Teensy41.svg)](https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/releases)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/AsyncFSWebServer_Teensy41.svg)](http://github.com/khoih-prog/AsyncFSWebServer_Teensy41/issues)
 
+
 <a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Donate to my libraries using BuyMeACoffee" style="height: 50px !important;width: 181px !important;" ></a>
 <a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-orange.svg?logo=buy-me-a-coffee&logoColor=FFDD00" style="height: 20px !important;width: 200px !important;" ></a>
+<a href="https://profile-counter.glitch.me/khoih-prog/count.svg" title="Total khoih-prog Visitor count"><img src="https://profile-counter.glitch.me/khoih-prog/count.svg" style="height: 30px;width: 200px;"></a>
+<a href="https://profile-counter.glitch.me/khoih-prog-AsyncFSWebServer_Teensy41/count.svg" title="AsyncFSWebServer_Teensy41 Visitor count"><img src="https://profile-counter.glitch.me/khoih-prog-AsyncFSWebServer_Teensy41/count.svg" style="height: 30px;width: 200px;"></a>
 
 ---
 ---
@@ -159,9 +162,9 @@ to apply the better and faster **asynchronous** feature of the **powerful** [ESP
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`Teensy core v1.56+`](https://www.pjrc.com/teensy/td_download.html) for Teensy 4.1
- 3. [`QNEthernet Library version v0.13.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet.
- 4. [`Teensy41_AsyncTCP library v1.0.0+`](https://github.com/khoih-prog/Teensy41_AsyncTCP) to use **Teensy 4.1 using QNEthernet Library**. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/Teensy41_AsyncTCP.svg?)](https://www.ardu-badge.com/Teensy41_AsyncTCP).
+ 2. [`Teensy core v1.57+`](https://www.pjrc.com/teensy/td_download.html) for Teensy 4.1
+ 3. [`QNEthernet Library version v0.16.0+`](https://github.com/ssilverman/QNEthernet) for Teensy 4.1 built-in Ethernet.
+ 4. [`Teensy41_AsyncTCP library v1.1.0+`](https://github.com/khoih-prog/Teensy41_AsyncTCP) to use **Teensy 4.1 using QNEthernet Library**. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/Teensy41_AsyncTCP.svg?)](https://www.ardu-badge.com/Teensy41_AsyncTCP).
 
 ---
 
@@ -174,9 +177,9 @@ The best and easiest way is to use `Arduino Library Manager`. Search for `AsyncF
 ### Manual Install
 
 1. Navigate to [AsyncFSWebServer_Teensy41](https://github.com/khoih-prog/AsyncFSWebServer_Teensy41) page.
-2. Download the latest release `AsyncFSWebServer_Teensy41-master.zip`.
-3. Extract the zip file to `AsyncFSWebServer_Teensy41-master` directory 
-4. Copy the whole `AsyncFSWebServer_Teensy41-master` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
+2. Download the latest release `AsyncFSWebServer_Teensy41-main.zip`.
+3. Extract the zip file to `AsyncFSWebServer_Teensy41-main` directory 
+4. Copy the whole `AsyncFSWebServer_Teensy41-main` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
 
 ### VS Code & PlatformIO:
 
@@ -216,7 +219,7 @@ These files must be copied into the directory:
 ## Important things to remember
 
 - This is fully asynchronous server and as such does not run on the loop thread.
-- You can not use yield() or delay() or any function that uses them inside the callbacks
+- You can not use `yield()` or `delay()` or any function that uses them inside the callbacks
 - The server is smart enough to know when to close the connection and free resources
 - You can not send more than one response to a single request
 
@@ -227,54 +230,54 @@ These files must be copied into the directory:
 ### The Async Web server
 
 - Listens for connections
-- Wraps the new clients into ```Request```
+- Wraps the new clients into `Request`
 - Keeps track of clients and cleans memory
-- Manages ```Rewrites``` and apply them on the request url
-- Manages ```Handlers``` and attaches them to Requests
+- Manages `Rewrites` and apply them on the request url
+- Manages `Handlers` and attaches them to Requests
 
 ### Request Life Cycle
 
 - TCP connection is received by the server
-- The connection is wrapped inside ```Request``` object
+- The connection is wrapped inside `Request` object
 - When the request head is received (type, url, get params, http version and host),
-  the server goes through all ```Rewrites``` (in the order they were added) to rewrite the url and inject query parameters,
-  next, it goes through all attached ```Handlers```(in the order they were added) trying to find one
-  that ```canHandle``` the given request. If none are found, the default(catch-all) handler is attached.
-- The rest of the request is received, calling the ```handleUpload``` or ```handleBody``` methods of the ```Handler``` if they are needed (POST+File/Body)
-- When the whole request is parsed, the result is given to the ```handleRequest``` method of the ```Handler``` and is ready to be responded to
-- In the ```handleRequest``` method, to the ```Request``` is attached a ```Response``` object (see below) that will serve the response data back to the client
-- When the ```Response``` is sent, the client is closed and freed from the memory
+  the server goes through all `Rewrites` (in the order they were added) to rewrite the url and inject query parameters,
+  next, it goes through all attached `Handlers` (in the order they were added) trying to find one
+  that `canHandle` the given request. If none are found, the default(catch-all) handler is attached.
+- The rest of the request is received, calling the `handleUpload` or `handleBody` methods of the `Handler` if they are needed (POST+File/Body)
+- When the whole request is parsed, the result is given to the `handleRequest` method of the `Handler` and is ready to be responded to
+- In the `handleRequest` method, to the `Request` is attached a `Response` object (see below) that will serve the response data back to the client
+- When the `Response` is sent, the client is closed and freed from the memory
 
 ### Rewrites and how do they work
 
-- The ```Rewrites``` are used to rewrite the request url and/or inject get parameters for a specific request url path.
-- All ```Rewrites``` are evaluated on the request in the order they have been added to the server.
-- The ```Rewrite``` will change the request url only if the request url (excluding get parameters) is fully match
-  the rewrite url, and when the optional ```Filter``` callback return true.
-- Setting a ```Filter``` to the ```Rewrite``` enables to control when to apply the rewrite, decision can be based on
+- The `Rewrites` are used to rewrite the request url and/or inject get parameters for a specific request url path.
+- All `Rewrites` are evaluated on the request in the order they have been added to the server.
+- The `Rewrite` will change the request url only if the request url (excluding get parameters) is fully match
+  the rewrite url, and when the optional `Filter` callback return true.
+- Setting a `Filter` to the `Rewrite` enables to control when to apply the rewrite, decision can be based on
   request url, http version, request host/port/target host, get parameters or the request client's localIP or remoteIP.
-- The ```Rewrite``` can specify a target url with optional get parameters, e.g. ```/to-url?with=params```
+- The `Rewrite` can specify a target url with optional get parameters, e.g. `/to-url?with=params`
 
 ### Handlers and how do they work
 
-- The ```Handlers``` are used for executing specific actions to particular requests
-- One ```Handler``` instance can be attached to any request and lives together with the server
-- Setting a ```Filter``` to the ```Handler``` enables to control when to apply the handler, decision can be based on
+- The `Handlers` are used for executing specific actions to particular requests
+- One `Handler` instance can be attached to any request and lives together with the server
+- Setting a `Filter` to the `Handler` enables to control when to apply the handler, decision can be based on
   request url, http version, request host/port/target host, get parameters or the request client's localIP or remoteIP.
-- The ```canHandle``` method is used for handler specific control on whether the requests can be handled
-  and for declaring any interesting headers that the ```Request``` should parse. Decision can be based on request
+- The `canHandle` method is used for handler specific control on whether the requests can be handled
+  and for declaring any interesting headers that the `Request` should parse. Decision can be based on request
   method, request url, http version, request host/port/target host and get parameters
-- Once a ```Handler``` is attached to given ```Request``` (```canHandle``` returned true)
-  that ```Handler``` takes care to receive any file/data upload and attach a ```Response```
-  once the ```Request``` has been fully parsed
-- ```Handlers``` are evaluated in the order they are attached to the server. The ```canHandle``` is called only
-  if the ```Filter``` that was set to the ```Handler``` return true.
-- The first ```Handler``` that can handle the request is selected, not further ```Filter``` and ```canHandle``` are called.
+- Once a `Handler` is attached to given `Request` (`canHandle` returned true)
+  that `Handler` takes care to receive any file/data upload and attach a `Response`
+  once the `Request` has been fully parsed
+- `Handlers` are evaluated in the order they are attached to the server. The `canHandle` is called only
+  if the `Filter` that was set to the `Handler` return true.
+- The first `Handler` that can handle the request is selected, not further `Filter` and `canHandle` are called.
 
 ### Responses and how do they work
 
-- The ```Response``` objects are used to send the response data back to the client
-- The ```Response``` object lives with the ```Request``` and is freed on end or disconnect
+- The `Response` objects are used to send the response data back to the client
+- The `Response` object lives with the `Request` and is freed on end or disconnect
 - Different techniques are used depending on the response type to send the data in packets
   returning back almost immediately and sending the next packet when this one is received.
   Any time in between is spent to run the user loop and handle other network packets
@@ -283,10 +286,10 @@ These files must be copied into the directory:
 
 ### Template processing
 
-- AsyncFSWebServer_Teensy41 contains simple template processing engine.
+- `AsyncWebServer_Ethernet` contains simple template processing engine.
 - Template processing can be added to most response types.
 - Currently it supports only replacing template placeholders with actual values. No conditional processing, cycles, etc.
-- Placeholders are delimited with ```%``` symbols. Like this: ```%TEMPLATE_PLACEHOLDER%```.
+- Placeholders are delimited with `%` symbols. Like this: `%TEMPLATE_PLACEHOLDER%`.
 - It works by extracting placeholder name from response text and passing it to user provided function which should return actual value to be used instead of placeholder.
 - Since it's user provided function, it is possible for library users to implement conditional processing and cycles themselves.
 - Since it's impossible to know the actual response size after template processing step in advance (and, therefore, to include it in response headers), the response becomes [chunked](#chunked-response).
@@ -314,14 +317,14 @@ request->multipart();     // bool:    True if the request has content type "mult
 int headers = request->headers();
 int i;
 
-for(i=0;i<headers;i++)
+for (i=0;i<headers;i++)
 {
   AsyncWebHeader* h = request->getHeader(i);
   Serial.printf("HEADER[%s]: %s\n", h->name().c_str(), h->value().c_str());
 }
 
 //get specific header by name
-if(request->hasHeader("MyHeader"))
+if (request->hasHeader("MyHeader"))
 {
   AsyncWebHeader* h = request->getHeader("MyHeader");
   Serial.printf("MyHeader: %s\n", h->value().c_str());
@@ -331,13 +334,13 @@ if(request->hasHeader("MyHeader"))
 int headers = request->headers();
 int i;
 
-for(i=0;i<headers;i++)
+for (i=0;i<headers;i++)
 {
   Serial.printf("HEADER[%s]: %s\n", request->headerName(i).c_str(), request->header(i).c_str());
 }
 
 //get specific header by name (Compatibility)
-if(request->hasHeader("MyHeader"))
+if (request->hasHeader("MyHeader"))
 {
   Serial.printf("MyHeader: %s\n", request->header("MyHeader").c_str());
 }
@@ -349,16 +352,16 @@ if(request->hasHeader("MyHeader"))
 //List all parameters
 int params = request->params();
 
-for(int i=0;i<params;i++)
+for (int i=0;i<params;i++)
 {
   AsyncWebParameter* p = request->getParam(i);
   
-  if(p->isFile())
+  if (p->isFile())
   { 
     //p->isPost() is also true
     Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
   } 
-  else if(p->isPost())
+  else if (p->isPost())
   {
     Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
   } 
@@ -369,27 +372,27 @@ for(int i=0;i<params;i++)
 }
 
 //Check if GET parameter exists
-if(request->hasParam("download"))
+if (request->hasParam("download"))
   AsyncWebParameter* p = request->getParam("download");
 
 //Check if POST (but not File) parameter exists
-if(request->hasParam("download", true))
+if (request->hasParam("download", true))
   AsyncWebParameter* p = request->getParam("download", true);
 
 //Check if FILE was uploaded
-if(request->hasParam("download", true, true))
+if (request->hasParam("download", true, true))
   AsyncWebParameter* p = request->getParam("download", true, true);
 
 //List all parameters (Compatibility)
 int args = request->args();
 
-for(int i=0;i<args;i++)
+for (int i=0;i<args;i++)
 {
   Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
 }
 
 //Check if parameter exists (Compatibility)
-if(request->hasArg("download"))
+if (request->hasArg("download"))
   String arg = request->arg("download");
 ```
 
@@ -433,7 +436,7 @@ request->send(404); //Sends 404 File Not Found
 
 ```cpp
 AsyncWebServerResponse *response = request->beginResponse(404); //Sends 404 File Not Found
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -463,7 +466,7 @@ request->send(Serial, "text/plain", 12);
 ```cpp
 //read 12 bytes from Serial and send them as Content Type text/plain
 AsyncWebServerResponse *response = request->beginResponse(Serial, "text/plain", 12);
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -472,7 +475,7 @@ request->send(response);
 ```cpp
 String processor(const String& var)
 {
-  if(var == "HELLO_FROM_TEMPLATE")
+  if (var == "HELLO_FROM_TEMPLATE")
     return F("Hello world!");
     
   return String();
@@ -489,8 +492,9 @@ request->send(Serial, "text/plain", 12, processor);
 ```cpp
 String processor(const String& var)
 {
-  if(var == "HELLO_FROM_TEMPLATE")
+  if (var == "HELLO_FROM_TEMPLATE")
     return F("Hello world!");
+    
   return String();
 }
 
@@ -498,7 +502,7 @@ String processor(const String& var)
 
 //read 12 bytes from Serial and send them as Content Type text/plain
 AsyncWebServerResponse *response = request->beginResponse(Serial, "text/plain", 12, processor);
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -531,7 +535,7 @@ AsyncWebServerResponse *response = request->beginResponse("text/plain", 128, [](
   return mySource.read(buffer, maxLen);
 });
 
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -540,7 +544,7 @@ request->send(response);
 ```cpp
 String processor(const String& var)
 {
-  if(var == "HELLO_FROM_TEMPLATE")
+  if (var == "HELLO_FROM_TEMPLATE")
     return F("Hello world!");
     
   return String();
@@ -565,7 +569,7 @@ request->send("text/plain", 128, [](uint8_t *buffer, size_t maxLen, size_t index
 ```cpp
 String processor(const String& var)
 {
-  if(var == "HELLO_FROM_TEMPLATE")
+  if (var == "HELLO_FROM_TEMPLATE")
     return F("Hello world!");
   return String();
 }
@@ -583,7 +587,7 @@ AsyncWebServerResponse *response = request->beginResponse("text/plain", 128, [](
   return mySource.read(buffer, maxLen);
 }, processor);
 
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -601,7 +605,7 @@ AsyncWebServerResponse *response = request->beginChunkedResponse("text/plain", [
   return mySource.read(buffer, maxLen);
 });
 
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -612,7 +616,7 @@ Used when content length is unknown. Works best if the client supports HTTP/1.1
 ```cpp
 String processor(const String& var)
 {
-  if(var == "HELLO_FROM_TEMPLATE")
+  if (var == "HELLO_FROM_TEMPLATE")
     return F("Hello world!");
     
   return String();
@@ -629,7 +633,7 @@ AsyncWebServerResponse *response = request->beginChunkedResponse("text/plain", [
   return mySource.read(buffer, maxLen);
 }, processor);
 
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 request->send(response);
 ```
 
@@ -637,7 +641,7 @@ request->send(response);
 
 ```cpp
 AsyncResponseStream *response = request->beginResponseStream("text/html");
-response->addHeader("Server","AsyncFSWebServer_Teensy41");
+response->addHeader("Server","AsyncWebServer_Ethernet");
 response->printf("<!DOCTYPE html><html><head><title>Webpage at %s</title></head><body>", request->url().c_str());
 
 response->print("<h2>Hello ");
@@ -659,7 +663,7 @@ response->print("<h3>Headers</h3>");
 response->print("<ul>");
 int headers = request->headers();
 
-for(int i=0;i<headers;i++)
+for (int i=0;i<headers;i++)
 {
   AsyncWebHeader* h = request->getHeader(i);
   response->printf("<li>%s: %s</li>", h->name().c_str(), h->value().c_str());
@@ -672,15 +676,15 @@ response->print("<ul>");
 
 int params = request->params();
 
-for(int i=0;i<params;i++)
+for (int i=0;i<params;i++)
 {
   AsyncWebParameter* p = request->getParam(i);
   
-  if(p->isFile())
+  if (p->isFile())
   {
     response->printf("<li>FILE[%s]: %s, size: %u</li>", p->name().c_str(), p->value().c_str(), p->size());
   } 
-  else if(p->isPost())
+  else if (p->isPost())
   {
     response->printf("<li>POST[%s]: %s</li>", p->name().c_str(), p->value().c_str());
   } 
@@ -704,7 +708,6 @@ This way of sending Json is great for when the result is **below 4KB**
 ```cpp
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
-
 
 AsyncResponseStream *response = request->beginResponseStream("application/json");
 DynamicJsonBuffer jsonBuffer;
@@ -733,6 +736,7 @@ AsyncJsonResponse * response = new AsyncJsonResponse();
 response->addHeader("Server","AsyncWebServer");
 JsonObject& root = response->getRoot();
 root["IP"] = Ethernet.localIP();
+
 response->setLength();
 
 request->send(response);
@@ -740,6 +744,7 @@ request->send(response);
 ---
 
 ## Param Rewrite With Matching
+
 It is possible to rewrite the request url with parameter matchg. Here is an example with one parameter:
 Rewrite for example "/radio/{frequence}" -> "/radio?f={frequence}"
 
@@ -758,12 +763,12 @@ class OneParamRewrite : public AsyncWebRewrite
 
       _paramIndex = _from.indexOf('{');
 
-      if( _paramIndex >=0 && _from.endsWith("}")) 
+      if ( _paramIndex >=0 && _from.endsWith("}")) 
       {
         _urlPrefix = _from.substring(0, _paramIndex);
         int index = _params.indexOf('{');
         
-        if(index >= 0) 
+        if (index >= 0) 
         {
           _params = _params.substring(0, index);
         }
@@ -778,9 +783,9 @@ class OneParamRewrite : public AsyncWebRewrite
 
   bool match(AsyncWebServerRequest *request) override 
   {
-    if(request->url().startsWith(_urlPrefix)) 
+    if (request->url().startsWith(_urlPrefix)) 
     {
-      if(_paramIndex >= 0) 
+      if (_paramIndex >= 0) 
       {
         _params = _paramsBackup + request->url().substring(_paramIndex);
       } 
@@ -803,7 +808,7 @@ class OneParamRewrite : public AsyncWebRewrite
 Usage:
 
 ```cpp
-  server.addRewrite( new OneParamRewrite("/radio/{frequence}", "/radio?f={frequence}") );
+server.addRewrite( new OneParamRewrite("/radio/{frequence}", "/radio?f={frequence}") );
 ```
 ---
 
@@ -846,46 +851,46 @@ without starting another listening service or using different port
 
 void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len)
 {
-  if(type == WS_EVT_CONNECT)
+  if (type == WS_EVT_CONNECT)
   {
     //client connected
     Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
     client->printf("Hello Client %u :)", client->id());
     client->ping();
   } 
-  else if(type == WS_EVT_DISCONNECT)
+  else if (type == WS_EVT_DISCONNECT)
   {
     //client disconnected
     Serial.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
   } 
-  else if(type == WS_EVT_ERROR)
+  else if (type == WS_EVT_ERROR)
   {
     //error was received from the other end
     Serial.printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
   } 
-  else if(type == WS_EVT_PONG)
+  else if (type == WS_EVT_PONG)
   {
     //pong message was received (in response to a ping request maybe)
     Serial.printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len)?(char*)data:"");
   } 
-  else if(type == WS_EVT_DATA)
+  else if (type == WS_EVT_DATA)
   {
     //data packet
     AwsFrameInfo * info = (AwsFrameInfo*)arg;
     
-    if(info->final && info->index == 0 && info->len == len)
+    if (info->final && info->index == 0 && info->len == len)
     {
       //the whole message is in a single frame and we got all of it's data
       Serial.printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT)?"text":"binary", info->len);
       
-      if(info->opcode == WS_TEXT)
+      if (info->opcode == WS_TEXT)
       {
         data[len] = 0;
         Serial.printf("%s\n", (char*)data);
       } 
       else 
       {
-        for(size_t i=0; i < info->len; i++)
+        for (size_t i=0; i < info->len; i++)
         {
           Serial.printf("%02x ", data[i]);
         }
@@ -893,7 +898,7 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
         Serial.printf("\n");
       }
       
-      if(info->opcode == WS_TEXT)
+      if (info->opcode == WS_TEXT)
         client->text("I got your text message");
       else
         client->binary("I got your binary message");
@@ -901,9 +906,9 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
     else 
     {
       //message is comprised of multiple frames or the frame is split into multiple packets
-      if(info->index == 0)
+      if (info->index == 0)
       {
-        if(info->num == 0)
+        if (info->num == 0)
           Serial.printf("ws[%s][%u] %s-message start\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
           
         Serial.printf("ws[%s][%u] frame[%u] start[%llu]\n", server->url(), client->id(), info->num, info->len);
@@ -911,28 +916,28 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
 
       Serial.printf("ws[%s][%u] frame[%u] %s[%llu - %llu]: ", server->url(), client->id(), info->num, (info->message_opcode == WS_TEXT)?"text":"binary", info->index, info->index + len);
       
-      if(info->message_opcode == WS_TEXT)
+      if (info->message_opcode == WS_TEXT)
       {
         data[len] = 0;
         Serial.printf("%s\n", (char*)data);
       } 
       else 
       {
-        for(size_t i=0; i < len; i++){
+        for (size_t i=0; i < len; i++){
           Serial.printf("%02x ", data[i]);
         }
         Serial.printf("\n");
       }
 
-      if((info->index + len) == info->len)
+      if ((info->index + len) == info->len)
       {
         Serial.printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), info->num, info->len);
         
-        if(info->final)
+        if (info->final)
         {
           Serial.printf("ws[%s][%u] %s-message end\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
           
-          if(info->message_opcode == WS_TEXT)
+          if (info->message_opcode == WS_TEXT)
             client->text("I got your text message");
           else
             client->binary("I got your binary message");
@@ -948,33 +953,43 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
 ```cpp
 //Server methods
 AsyncWebSocket ws("/ws");
+
 //printf to a client
 ws.printf((uint32_t)client_id, arguments...);
+
 //printf to all clients
 ws.printfAll(arguments...);
+
 //send text to a client
 ws.text((uint32_t)client_id, (char*)text);
 ws.text((uint32_t)client_id, (uint8_t*)text, (size_t)len);
+
 //send text to all clients
 ws.textAll((char*)text);
 ws.textAll((uint8_t*)text, (size_t)len);
+
 //send binary to a client
 ws.binary((uint32_t)client_id, (char*)binary);
 ws.binary((uint32_t)client_id, (uint8_t*)binary, (size_t)len);
 ws.binary((uint32_t)client_id, flash_binary, 4);
+
 //send binary to all clients
 ws.binaryAll((char*)binary);
 ws.binaryAll((uint8_t*)binary, (size_t)len);
+
 //HTTP Authenticate before switch to Websocket protocol
 ws.setAuthentication("user", "pass");
 
 //client methods
 AsyncWebSocketClient * client;
+
 //printf
 client->printf(arguments...);
+
 //send text
 client->text((char*)text);
 client->text((uint8_t*)text, (size_t)len);
+
 //send binary
 client->binary((char*)binary);
 client->binary((uint8_t*)binary, (size_t)len);
@@ -988,6 +1003,7 @@ When sending a web socket message using the above methods a buffer is created.  
 void sendDataWs(AsyncWebSocketClient * client)
 {
     DynamicJsonBuffer jsonBuffer;
+    
     JsonObject& root = jsonBuffer.createObject();
     root["a"] = "abc";
     root["b"] = "abcd";
@@ -1015,10 +1031,11 @@ void sendDataWs(AsyncWebSocketClient * client)
 
 ### Limiting the number of web socket clients
 
-Browsers sometimes do not correctly close the websocket connection, even when the close() function is called in javascript.  This will eventually exhaust the web server's resources and will cause the server to crash.  Periodically calling the cleanClients() function from the main loop() function limits the number of clients by closing the oldest client when the maximum number of clients has been exceeded.  This can called be every cycle, however, if you wish to use less power, then calling as infrequently as once per second is sufficient.
+Browsers sometimes do not correctly close the websocket connection, even when the `close()` function is called in javascript.  This will eventually exhaust the web server's resources and will cause the server to crash.  Periodically calling the `cleanClients()` function from the main `loop()` function limits the number of clients by closing the oldest client when the maximum number of clients has been exceeded.  This can called be every cycle, however, if you wish to use less power, then calling as infrequently as once per second is sufficient.
 
 ```cpp
-void loop(){
+void loop()
+{
   ws.cleanupClients();
 }
 ```
@@ -1027,8 +1044,8 @@ void loop(){
 
 ## Async Event Source Plugin
 
-The server includes EventSource (Server-Sent Events) plugin which can be used to send short text events to the browser.
-Difference between EventSource and WebSockets is that EventSource is single direction, text-only protocol.
+The server includes `EventSource` (Server-Sent Events) plugin which can be used to send short text events to the browser.
+Difference between `EventSource` and `WebSockets` is that `EventSource` is single direction, text-only protocol.
 
 ### Setup Event Source on the server
 
@@ -1041,7 +1058,7 @@ void setup()
   // setup ......
   events.onConnect([](AsyncEventSourceClient *client)
   {
-    if(client->lastId())
+    if (client->lastId())
     {
       Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
     }
@@ -1059,7 +1076,9 @@ void setup()
 
 void loop()
 {
-  if(eventTriggered){ // your logic here
+  if (eventTriggered)
+  { 
+    // your logic here
     //send event "myevent"
     events.send("my event content","myevent",millis());
   }
@@ -1104,9 +1123,10 @@ if (!!window.EventSource)
 Server goes through handlers in same order as they were added. You can't simple add handler with same path to override them.
 To remove handler:
 
-```arduino
+```cpp
 // save callback for particular URL path
-auto handler = server.on("/some/path", [](AsyncWebServerRequest *request){
+auto handler = server.on("/some/path", [](AsyncWebServerRequest *request)
+{
   //do something useful
 });
 
@@ -1116,7 +1136,8 @@ server.removeHandler(&handler);
 // same with rewrites
 server.removeRewrite(&someRewrite);
 
-server.onNotFound([](AsyncWebServerRequest *request){
+server.onNotFound([](AsyncWebServerRequest *request)
+{
   request->send(404);
 });
 
@@ -1130,20 +1151,109 @@ server.reset();
 
 ## Setting up the server
 
-https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/blob/d09281ae572db571fa5e53e624ca19f16462f892/examples/Async_HelloServer/Async_HelloServer.ino#L13-L150
+```cpp
+#if !( defined(ESP8266) )
+  #error This code is designed for ESP8266 platform! Please check your Tools->Board setting.
+#endif
 
+#include <Arduino.h>
 
+#define _AWS_ETHERNET_LOGLEVEL_       4
+
+// Select the IP address according to your local network
+IPAddress myIP(192, 168, 2, 232);
+IPAddress myGW(192, 168, 2, 1);
+IPAddress mySN(255, 255, 255, 0);
+
+// Google DNS Server IP
+IPAddress myDNS(8, 8, 8, 8);
+
+#include <ESPAsyncTCP.h>
+
+#include <AsyncWebServer_Ethernet.h>
+
+AsyncWebServer    server(80);
+
+void handleRoot(AsyncWebServerRequest *request)
+{
+  request->send(200, "text/plain", String("Hello from Async_HelloServer on ") + BOARD_NAME );
+}
+
+void handleNotFound(AsyncWebServerRequest *request)
+{
+  String message = "File Not Found\n\n";
+
+  message += "URI: ";
+  //message += server.uri();
+  message += request->url();
+  message += "\nMethod: ";
+  message += (request->method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += request->args();
+  message += "\n";
+
+  for (uint8_t i = 0; i < request->args(); i++)
+  {
+    message += " " + request->argName(i) + ": " + request->arg(i) + "\n";
+  }
+
+  request->send(404, "text/plain", message);
+}
+
+void setup(void)
+{
+  Serial.begin(115200);
+  while (!Serial);
+
+  delay(200);
+
+  Serial.print(F("\nStart Async_HelloServer on ")); Serial.print(BOARD_NAME);
+  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
+  Serial.println(ASYNC_WEBSERVER_WT32_ETH01_VERSION);
+
+  //bool begin(uint8_t phy_addr=ETH_PHY_ADDR, int power=ETH_PHY_POWER, int mdc=ETH_PHY_MDC, int mdio=ETH_PHY_MDIO, 
+  //           eth_phy_type_t type=ETH_PHY_TYPE, eth_clock_mode_t clk_mode=ETH_CLK_MODE);
+  //ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLK_MODE);
+  ETH.begin(ETH_PHY_ADDR, ETH_PHY_POWER);
+
+  // Static IP, leave without this line to get IP via DHCP
+  //bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = 0, IPAddress dns2 = 0);
+  ETH.config(myIP, myGW, mySN, myDNS);
+
+  WT32_ETH01_onEvent();
+
+  WT32_ETH01_waitForConnect();
+  
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request)
+  {
+    handleRoot(request);
+  });
+
+  server.on("/inline", [](AsyncWebServerRequest * request)
+  {
+    request->send(200, "text/plain", "This works as well");
+  });
+
+  server.onNotFound(handleNotFound);
+
+  server.begin();
+
+  Serial.print(F("HTTP EthernetWebServer is @ IP : "));
+  Serial.println(ETH.localIP());
+}
+
+void loop(void)
+{
+}
+```
 ---
 
 ### Setup global and class functions as request handlers
 
 ```cpp
-#include "QNEthernet.h"       // https://github.com/ssilverman/QNEthernet
-using namespace qindesign::network;
+#include <Arduino.h>
 
-#include <AsyncFSWebServer_Teensy41.h>
-
-AsyncWebServer    server(80);
+#include <AsyncWebServer_Ethernet.h>
 
 ...
 
@@ -1189,13 +1299,13 @@ void loop()
 ### Methods for controlling websocket connections
 
 ```cpp
-  // Disable client connections if it was activated
-  if ( ws.enabled() )
-    ws.enable(false);
+// Disable client connections if it was activated
+if ( ws.enabled() )
+  ws.enable(false);
 
-  // enable client connections if it was disabled
-  if ( !ws.enabled() )
-    ws.enable(true);
+// enable client connections if it was disabled
+if ( !ws.enabled() )
+  ws.enable(true);
 ```
 
 
@@ -1219,9 +1329,12 @@ This is one option:
 ```cpp
 webServer.onNotFound([](AsyncWebServerRequest *request) 
 {
-  if (request->method() == HTTP_OPTIONS) {
+  if (request->method() == HTTP_OPTIONS) 
+  {
     request->send(200);
-  } else {
+  } 
+  else 
+  {
     request->send(404);
   }
 });
@@ -1233,11 +1346,12 @@ With path variable you can create a custom regex rule for a specific parameter i
 For example we want a `sensorId` parameter in a route rule to match only a integer.
 
 ```cpp
-  server.on("^\\/sensor\\/([0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest *request) 
-  {
-      String sensorId = request->pathArg(0);
-  });
+server.on("^\\/sensor\\/([0-9]+)$", HTTP_GET, [] (AsyncWebServerRequest *request) 
+{
+    String sensorId = request->pathArg(0);
+});
 ```
+
 *NOTE*: All regex patterns starts with `^` and ends with `$`
 
 To enable the `Path variable` support, you have to define the buildflag `-DASYNCWEBSERVER_REGEX`.
@@ -1250,15 +1364,16 @@ For Arduino IDE create/update `platform.local.txt`:
 `Linux`: ~/.arduino15/packages/`{espxxxx}`/hardware/`{espxxxx}`/`{version}`/platform.local.txt
 
 Add/Update the following line:
+
 ```
   compiler.cpp.extra_flags=-DDASYNCWEBSERVER_REGEX
 ```
 
 For platformio modify `platformio.ini`:
+
 ```ini
 [env:myboard]
-build_flags = 
-  -DASYNCWEBSERVER_REGEX
+build_flags = -DASYNCWEBSERVER_REGEX
 ```
 
 *NOTE*: By enabling `ASYNCWEBSERVER_REGEX`, `<regex>` will be included. This will add an 100k to your binary.
@@ -1266,6 +1381,7 @@ build_flags =
 
 ---
 ---
+
 
 ### Examples
 
@@ -1296,7 +1412,7 @@ https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/blob/d09281ae572db571fa5
 You can access the Async Advanced WebServer @ the server IP
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/blob/main/pics/Async_AdvancedWebServer.png">
+    <img src="https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/raw/main/pics/Async_AdvancedWebServer.png">
 </p>
 
 ---
@@ -1309,7 +1425,7 @@ You can access the Async Advanced WebServer @ the server IP
 Following are debug terminal output and screen shots when running example [Async_AdvancedWebServer](examples/Async_AdvancedWebServer) on Teensy4.1 using Built-in Ethernet and QNEthernet Library demonstrate the operation of AsyncWebServer.
 
 
-```
+```cpp
 Start Async_AdvancedWebServer on TEENSY 4.1 with Teensy4.1 QNEthernet
 AsyncFSWebServer_Teensy41 v1.4.1
 Initialize Ethernet using DHCP => Connected! IP address:192.168.2.107
@@ -1317,7 +1433,7 @@ HTTP EthernetWebServer is @ IP : 192.168.2.107
 ```
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/blob/main/pics/Async_AdvancedWebServer.png">
+    <img src="https://github.com/khoih-prog/AsyncFSWebServer_Teensy41/raw/main/pics/Async_AdvancedWebServer.png">
 </p>
 
 ---
@@ -1327,7 +1443,7 @@ HTTP EthernetWebServer is @ IP : 192.168.2.107
 Following is debug terminal output when running example [WebClient](examples/WebClient) on Teensy4.1 using Built-in Ethernet and QNEthernet Library.
 
 
-```
+```cpp
 Start WebClient on TEENSY 4.1 with Teensy4.1 QNEthernet
 AsyncFSWebServer_Teensy41 v1.4.1
 Initialize Ethernet using DHCP => Connected! IP address:192.168.2.107
@@ -1398,7 +1514,7 @@ Disconnecting from server...
 Following is debug terminal output when running example [MQTTClient_Auth](examples/MQTTClient_Auth) on Teensy4.1 using Built-in Ethernet and QNEthernet Library.
 
 
-```
+```cpp
 Start MQTTClient_Auth on TEENSY 4.1 with Teensy4.1 QNEthernet
 AsyncFSWebServer_Teensy41 v1.4.1
 Initialize Ethernet using DHCP => Connected! IP address:192.168.2.107
@@ -1418,7 +1534,7 @@ Message arrived [MQTT_Pub] Hello from MQTTClient_Auth on TEENSY 4.1 with Teensy4
 
 Following is debug terminal output when running example [MQTTClient_Basic](examples/MQTTClient_Basic) on Teensy4.1 using Built-in Ethernet and QNEthernet Library.
 
-```
+```cpp
 Start MQTTClient_Basic on TEENSY 4.1 with Teensy4.1 QNEthernet
 AsyncFSWebServer_Teensy41 v1.4.1
 Initialize Ethernet using DHCP => Connected! IP address:192.168.2.107
@@ -1445,7 +1561,7 @@ Message arrived [MQTT_Pub] Hello from MQTTClient_Basic on TEENSY 4.1 with Teensy
 
 Following is debug terminal output when running example [MQTT_ThingStream](examples/MQTT_ThingStream) on Teensy4.1 using Built-in Ethernet and QNEthernet Library.
 
-```
+```cpp
 Start MQTT_ThingStream on TEENSY 4.1 with Teensy4.1 QNEthernet
 AsyncFSWebServer_Teensy41 v1.4.1
 Initialize Ethernet using DHCP => Connected! IP address:192.168.2.107
@@ -1514,6 +1630,7 @@ Submit issues to: [AsyncFSWebServer_Teensy41 issues](https://github.com/khoih-pr
  3. Add debugging features.
  4. Add Authentication support (MD5, SHA1).
  5. Add Table-of-Contents and Version String
+ 6. Use `allman astyle` and add `utils`
  
 
 ---
@@ -1552,8 +1669,8 @@ If you want to contribute to this project:
 
 ## Copyright
 
-- Copyright 2016- Hristo Gochkov
-- Copyright 2022- Khoi Hoang
+- Copyright (c) 2016- Hristo Gochkov
+- Copyright (c) 2022- Khoi Hoang
 
 
 
